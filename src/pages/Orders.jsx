@@ -39,7 +39,7 @@ const Orders = () => {
                 <p className="text-sm md:text-base">Ready to Ship</p>
               </div>
               <button className="border px-4 py-2 text-sm font-medium rounded-sm">
-                Track Order
+                Track Orders
               </button>
             </div>
           </div>
