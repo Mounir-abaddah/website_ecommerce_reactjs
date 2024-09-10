@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { ShopContext } from '../context/ShopContext';
 import { assets } from "../assets/frontend_assets/assets";
 import Title from "../components/Title";
-import ProductsItem from "../components/ProdutsItem"; // Fixed typo: ProdutsItem -> ProductsItem
+import ProductsItem from "../components/ProdutsItem"; // Fixed typo
 
 const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
@@ -32,47 +32,43 @@ const Collection = () => {
     let productsCopy = products.slice();
 
     if (showSearch && search) {
-      productsCopy = productsCopy.filter((item) =>
+      productsCopy = productsCopy.filter(item =>
         item.name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
     if (category.length > 0) {
-      productsCopy = productsCopy.filter((item) => category.includes(item.category));
+      productsCopy = productsCopy.filter(item => category.includes(item.category));
     }
 
     if (subCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) => subCategory.includes(item.subCategory));
+      productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory));
     }
 
     setFilterProducts(productsCopy);
   };
 
-  const sortProducts = () => {
-    let fpCopy = filterProducts.slice();
+  const sortProducts = (filteredProducts) => {
+    let sortedProducts = [...filteredProducts]; // Create a shallow copy
     switch (sortType) {
       case 'low-high':
-        setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
-        break;
+        return sortedProducts.sort((a, b) => a.price - b.price);
       case 'high-low':
-        setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
-        break;
+        return sortedProducts.sort((a, b) => b.price - a.price);
       default:
-        break; // No need to call applyFilter here, it's handled in useEffect already
+        return sortedProducts;
     }
   };
 
   useEffect(() => {
-    setFilterProducts(products);
-  }, [products]);
-
-  useEffect(() => {
+    // Apply filter first
     applyFilter();
-  }, [category, subCategory, search, showSearch]);
+  }, [category, subCategory, search, showSearch, products]);
 
   useEffect(() => {
-    sortProducts();
-  }, [sortType, filterProducts]);
+    // Sort the filtered products after applying filters
+    setFilterProducts((prevFilteredProducts) => sortProducts(prevFilteredProducts));
+  }, [sortType]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
